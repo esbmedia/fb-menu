@@ -400,7 +400,8 @@
       , menu       = document.querySelectorAll('#menu')[0]
       , page       = document.querySelectorAll('#page')[0]
       , closeMask  = document.querySelectorAll('#close-mask')[0]
-      , trigger    = page.querySelectorAll('.trigger')[0];
+      , trigger    = page.querySelectorAll('.trigger')[0]
+    , movedVert = false;
 
     var transitionEnd = whichTransitionEvent();
 
@@ -430,6 +431,7 @@
         page.addEventListener('touchstart', function(event) {
             startX = event.touches[0].pageX;
             startY = event.touches[0].pageY;
+			scrollY = window.pageYOffset;
 
             shouldOpenMenu = false;
             shouldCloseMenu = false;
@@ -440,20 +442,24 @@
 
         page.addEventListener('touchmove', function(event) {
             var moveX      = event.changedTouches[0].pageX
-              , moveY      = event.changedTouches[0].pageY
+              , moveY      = window.pageYOffset
               , distanceX  = moveX - startX
-              , distanceY  = moveY - startY
+              , distanceY  = moveY - scrollY
               , movedLeft  = distanceX < 0
-              , movedRight = distanceX > 5
-              , movedVert  = Math.abs(distanceY) > 15;
+              , movedRight = distanceX > 1;
+              
+				if(!movedVert)
+				{
+					movedVert  = Math.abs(distanceY) > 5;
+					}
 
-            // var debugStr = 'x: ' + startX + ', ' + moveX + ', ' + distanceX + '<br>';
-            // debugStr = debugStr + 'y: ' + startY + ', ' + moveY + ', ' + distanceY + '<br>';
-            // debugStr = debugStr + 'L: ' + movedLeft + ', R: ' + movedRight + ', V: ' + movedVert + '<br>';
-            // debugStr = debugStr + 'menuOpen: ' + menuOpen;
+             //var debugStr = 'x: ' + startX + ', ' + moveX + ', ' + distanceX + '<br>';
+             //debugStr = debugStr + 'y: ' + startY + ', ' + moveY + ', ' + distanceY + ', ' + window.pageYOffset + '<br>';
+             //debugStr = debugStr + 'L: ' + movedLeft + ', R: ' + movedRight + ', V: ' + movedVert + '<br>';
+             //debugStr = debugStr + 'menuOpen: ' + menuOpen;
 
-            // debug.style.display = 'block';
-            // debug.innerHTML = debugStr;
+             //debug.style.display = 'block';
+             //debug.innerHTML = debugStr;
 
             if (!movedVert) {
 
@@ -476,7 +482,8 @@
         });
 
         page.addEventListener('touchend', function(event) {
-            if (shouldOpenMenu) {
+            movedVert = false;
+			if (shouldOpenMenu) {
                 openMenu();
             } 
 
